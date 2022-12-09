@@ -39,3 +39,47 @@ catch_data = [
     ('Окунь', '2022-11-29', 14, 2),
 ]
 
+"""
+===============================
+Запросы к базе данных
+===============================
+"""
+# выборка по заданному диапазону веса
+select_1 = """SELECT fish_name, weight, catch_date, vessel_name, side_number 
+                FROM catch INNER JOIN vessel
+	              ON catch.vessel_id = vessel.id
+               WHERE catch.weight BETWEEN {} AND {};
+               """
+
+# выборка по названию рыбы. Название совпадает с задаваемым пользователем,
+# отсортированного в порядке возрастания веса вылова.
+select_2 = """SELECT fish_name, weight, catch_date, vessel_name, side_number 
+                FROM catch INNER JOIN vessel
+	              ON catch.vessel_id = vessel.id
+               WHERE catch.fish_name = '{}'
+               ORDER BY catch.weight;
+               """
+
+# выборка данных, когда был самый большой улов.(Самые большие уловы входят в диапазон от 0.8 до 1 от максимального)
+select_3 = """SELECT fish_name, weight, catch_date, vessel_name, side_number 
+                FROM catch INNER JOIN vessel
+	              ON catch.vessel_id = vessel.id
+               WHERE catch.weight BETWEEN 0.8*(SELECT MAX(weight) from catch) AND
+                                                (SELECT MAX(weight) from catch);
+               """
+
+# выборка данных, когда был самый маленький улов.
+select_4 = """SELECT fish_name, weight, catch_date, vessel_name, side_number 
+                FROM catch INNER JOIN vessel
+	              ON catch.vessel_id = vessel.id
+               WHERE catch.weight = (SELECT MIN(weight) from catch);
+               """
+
+# выборка по по заданному пользователем бортовому номеру,
+#     отсортированного в порядке возрастания веса вылова.
+select_5 = """SELECT fish_name, weight, catch_date, vessel_name, side_number 
+                FROM catch INNER JOIN vessel
+	              ON catch.vessel_id = vessel.id
+               WHERE vessel.side_number = '{}'
+               ORDER BY catch.weight;
+               """
